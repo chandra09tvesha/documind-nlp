@@ -1,25 +1,28 @@
 
-import fitz
 
+import pymupdf
 from src.preprocessing import clean_text
 
 
 def extract_document_text(filename: str, file_bytes: bytes) -> str:
-    """Extract text from PDF or TXT files."""
-
     extension = filename.lower().rsplit(".", 1)[-1]
 
     if extension == "pdf":
         pages = []
-
-        with fitz.open(stream=file_bytes, filetype="pdf") as document:
+        with pymupdf.open(
+            stream=file_bytes,
+            filetype="pdf",
+        ) as document:
             for page in document:
                 pages.append(page.get_text("text"))
 
         text = "\n".join(pages)
 
     elif extension == "txt":
-        text = file_bytes.decode("utf-8-sig", errors="replace")
+        text = file_bytes.decode(
+            "utf-8-sig",
+            errors="replace",
+        )
 
     else:
         raise ValueError(
